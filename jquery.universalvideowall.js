@@ -15,10 +15,10 @@
             template: '\
 <ul class="uvwall">\
     {{#tracks}}\
-    <li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="{{thumbnail.normal}}" /></a>\
+    <li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="{{thumbnail.large}}" /></a>\
         <ul>\
             <li>{{title}}</li>\
-            <li>{{hits}}</li>\
+            <li>{{hits}} views</li>\
             <li>{{date}}</li>\
         </ul>\
     </li>\
