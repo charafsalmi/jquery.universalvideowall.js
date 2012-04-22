@@ -6,12 +6,23 @@
  * Dual licensed under the MIT or GPL Version 2 licenses
  * @description Fetch your videos from various video-sharing websites and display them in a beautiful way.
  */
+ /*jshint multistr:true */
 "use strict";
 (function ($) {
     $.fn.universalvideowall = function (options) {
         var defaults = {
             accounts: [],
-            template: '<ul class="uvwall">{{#tracks}}<li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="" /></a></li><ul><li>{{hits}}</li></ul></li>{{/tracks}}</ul>',
+            template: '\
+<ul class="uvwall">\
+    {{#tracks}}\
+	<li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="" /></a>\
+	<ul>\
+		<li>{{hits}}</li>\
+	</ul>\
+	</li>\
+	{{/tracks}}\
+</ul>\
+',
             final_callback: function ()  {
                 return true;
             },
@@ -170,6 +181,8 @@
             });
             //Convert fetched json to tracks
             $(document).bind('queueAjaxStop', function (e, data) {
+                e = e;
+                data = data;
                 var russian_monthes = {
                     'янв': '01',
                     'фев': '02',
