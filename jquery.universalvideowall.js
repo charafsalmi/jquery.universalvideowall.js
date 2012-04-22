@@ -15,12 +15,14 @@
             template: '\
 <ul class="uvwall">\
     {{#tracks}}\
-	<li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="{{thumbnail.normal}}" /></a>\
-	<ul>\
-		<li>{{hits}}</li>\
-	</ul>\
-	</li>\
-	{{/tracks}}\
+    <li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="{{thumbnail.normal}}" /></a>\
+        <ul>\
+            <li>{{title}}</li>\
+            <li>{{hits}}</li>\
+            <li>{{date}}</li>\
+        </ul>\
+    </li>\
+    {{/tracks}}\
 </ul>\
 ',
             final_callback: function ()  {
