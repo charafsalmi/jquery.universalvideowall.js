@@ -15,7 +15,7 @@
             template: '\
 <ul class="uvwall">\
     {{#tracks}}\
-	<li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="" /></a>\
+	<li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="{{thumbnail.normal}}" /></a>\
 	<ul>\
 		<li>{{hits}}</li>\
 	</ul>\
