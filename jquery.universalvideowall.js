@@ -11,7 +11,7 @@
     $.fn.universalvideowall = function (options) {
         var defaults = {
             accounts: [],
-            template: '<ul class="uvwall">{{#tracks}}<li>{{title}}</li><ul><li>{{hits}}</li></ul>{{/tracks}}</ul>',
+            template: '<ul class="uvwall">{{#tracks}}<li class="{{platform}} {{platform_identifier}}"><a href="{{platformLink}}"><img src="" /></a></li><ul><li>{{hits}}</li></ul>{{/tracks}}</ul>',
             final_callback: function ()  {
                 return true;
             },
