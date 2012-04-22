@@ -1,7 +1,10 @@
 /**
  * jQuery Universal Video Wall
- * - Compatibility : Rutube, Dailymotion, Youtube
- * - Get your playlists and display them in a beautiful way
+ * @author Charaf Salmi
+ * @version 1.0
+ * Copyright 2012, Charaf Salmi
+ * Dual licensed under the MIT or GPL Version 2 licenses
+ * @description Fetch your videos from various video-sharing websites and display them in a beautiful way.
  */
 "use strict";
 (function ($) {
