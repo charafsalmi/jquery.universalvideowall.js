@@ -129,7 +129,7 @@
                 switch (query.account.type) {
                 case "dailymotion":
                     options.queries[index].id = queue.add({
-                        dataType: "json",
+                        dataType: "jsonp",
                         url: query.api,
                         type: 'GET',
                         success: function(response, textStatus, xhr, am_options) {
@@ -152,10 +152,10 @@
                         success: function(response, textStatus, xhr, am_options) {
                             textStatus = textStatus;
                             xhr = xhr;
-                            response = (window.tracks);
+                            var la_response = (window.tracks);
                             $.each(options.queries, function(index, value) {
                                 if (value.id == am_options.xhrID) {
-                                    options.queries[index].response = response;
+                                    options.queries[index].response = la_response;
                                     return;
                                 }
                             });
@@ -164,7 +164,7 @@
                     break;
                 case "youtube":
                     options.queries[index].id = queue.add({
-                        dataType: "json",
+                        dataType: "jsonp",
                         url: query.api,
                         type: 'GET',
                         success: function(response, textStatus, xhr, am_options) {
@@ -217,81 +217,82 @@
                     return d; //from 00 00 0000 to 0000-00-00T00:00:00.000Z
                 }
                 $.each(options.queries, function(index, query) {
-                    if (!query.response.length) return;
-                    switch (query.account.type) {
-                    case "dailymotion":
-                        if (query.response.list) {
-                            $.each(query.response.list, function(index, entry) {
-                                var true_date = (new Date(entry.created_time * 1000)).toISOString();
-                                var track = {
-                                    id: entry.id,
-                                    title: entry.title,
-                                    description: entry.description,
-                                    date: true_date,
-                                    duration: entry.duration,
-                                    hits: entry.views_total,
-                                    playerLink: entry.swf_url,
-                                    platform: query.account.type,
-                                    platformLink: entry.url,
-                                    thumbnail: {
-                                        small: entry.thumbnail_small_url,
-                                        normal: entry.thumbnail_medium_url,
-                                        large: entry.thumbnail_large_url
-                                    },
-                                    platform_identifier: query.account.identifier
-                                };
-                                options.tracks.push(track);
-                            });
+                    if (query.response instanceof Object)  {
+                        switch (query.account.type) {
+                        case "dailymotion":
+                            if (query.response.list instanceof Array) {
+                                $.each(query.response.list, function(index, entry) {
+                                    var true_date = (new Date(entry.created_time * 1000)).toISOString();
+                                    var track = {
+                                        id: entry.id,
+                                        title: entry.title,
+                                        description: entry.description,
+                                        date: true_date,
+                                        duration: entry.duration,
+                                        hits: entry.views_total,
+                                        playerLink: entry.swf_url,
+                                        platform: query.account.type,
+                                        platformLink: entry.url,
+                                        thumbnail: {
+                                            small: entry.thumbnail_small_url,
+                                            normal: entry.thumbnail_medium_url,
+                                            large: entry.thumbnail_large_url
+                                        },
+                                        platform_identifier: query.account.identifier
+                                    };
+                                    options.tracks.push(track);
+                                });
+                            }
+                            break;
+                        case "rutube":
+                            if (query.response instanceof Array) {
+                                $.each(query.response, function(index, entry) {
+                                    var track = {
+                                        id: my_rutube_id(entry.movieLink),
+                                        title: my_trim(entry.title),
+                                        description: my_trim(entry.description),
+                                        date: format_rutube_date(entry.recordDate),
+                                        duration: entry.duration,
+                                        hits: entry.hits,
+                                        playerLink: entry.playerLink,
+                                        platform: query.account.type,
+                                        platformLink: 'http://www.rutube.ru/tracks/' + my_rutube_id(entry.movieLink) + '.html',
+                                        thumbnail: {
+                                            small: entry.thumbnailSmallLink,
+                                            normal: entry.thumbnailMediumLink,
+                                            large: entry.thumbnailLink
+                                        },
+                                        platform_identifier: query.account.identifier
+                                    };
+                                    options.tracks.push(track);
+                                });
+                            }
+                            break;
+                        case "youtube":
+                            if (query.response.feed instanceof Object) {
+                                $.each(query.response.feed.entry, function(index, entry) {
+                                    var track = {
+                                        id: entry.media$group.yt$videoid.$t,
+                                        title: entry.media$group.media$title.$t,
+                                        description: entry.media$group.media$description.$t,
+                                        date: entry.media$group.yt$uploaded.$t,
+                                        duration: entry.media$group.yt$duration.seconds,
+                                        hits: entry.yt$statistics.viewCount,
+                                        playerLink: entry.media$group.media$content[0].url,
+                                        platform: 'youtube',
+                                        platformLink: entry.media$group.media$player.url,
+                                        thumbnail: {
+                                            small: entry.media$group.media$thumbnail[0].url,
+                                            normal: entry.media$group.media$thumbnail[1].url,
+                                            large: entry.media$group.media$thumbnail[2].url
+                                        },
+                                        platform_identifier: query.account.identifier
+                                    };
+                                    options.tracks.push(track);
+                                });
+                            }
+                            break;
                         }
-                        break;
-                    case "rutube":
-                        if (query.response) {
-                            $.each(query.response, function(index, entry) {
-                                var track = {
-                                    id: my_rutube_id(entry.movieLink),
-                                    title: my_trim(entry.title),
-                                    description: my_trim(entry.description),
-                                    date: format_rutube_date(entry.recordDate),
-                                    duration: entry.duration,
-                                    hits: entry.hits,
-                                    playerLink: entry.playerLink,
-                                    platform: query.account.type,
-                                    platformLink: 'http://www.rutube.ru/tracks/' + my_rutube_id(entry.movieLink) + '.html',
-                                    thumbnail: {
-                                        small: entry.thumbnailSmallLink,
-                                        normal: entry.thumbnailMediumLink,
-                                        large: entry.thumbnailLink
-                                    },
-                                    platform_identifier: query.account.identifier
-                                };
-                                options.tracks.push(track);
-                            });
-                        }
-                        break;
-                    case "youtube":
-                        if (query.response.feed.entry) {
-                            $.each(query.response.feed.entry, function(index, entry) {
-                                var track = {
-                                    id: entry.media$group.yt$videoid.$t,
-                                    title: entry.media$group.media$title.$t,
-                                    description: entry.media$group.media$description.$t,
-                                    date: entry.media$group.yt$uploaded.$t,
-                                    duration: entry.media$group.yt$duration.seconds,
-                                    hits: entry.yt$statistics.viewCount,
-                                    playerLink: entry.media$group.media$content[0].url,
-                                    platform: 'youtube',
-                                    platformLink: entry.media$group.media$player.url,
-                                    thumbnail: {
-                                        small: entry.media$group.media$thumbnail[0].url,
-                                        normal: entry.media$group.media$thumbnail[1].url,
-                                        large: entry.media$group.media$thumbnail[2].url
-                                    },
-                                    platform_identifier: query.account.identifier
-                                };
-                                options.tracks.push(track);
-                            });
-                        }
-                        break;
                     }
                 });
                 options.tracks.sort(options.sort_function);
